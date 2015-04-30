@@ -1,0 +1,618 @@
+<!DOCTYPE html -->
+    <html>
+        <head>
+            <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+            <script src="js/jquery.min.js"></script>
+            <script src="js/jquery.mobile-1.4.5.min.js"></script>
+            <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
+            <script type="text/javascript">
+                $(document).ready(function inicio(){
+                    //alert("Pagina Lista");
+                    var regPas=$("#regPas");
+                    regPas.click(function regPasajero(){
+                        var idpas=parseInt($("#idpasajero").val());
+                        var nom= $("#nombre").val();
+                        var apep= $("#apep").val();
+                        var idCor= parseInt($("#idcorrida").val());
+                        var hsal= $("#hsalida").val();
+                        var asi= parseInt($("#asiento").val());
+                        
+                        $.ajax({
+                            type: "POST",
+                            url: "regpas.php",
+                            data: "idpas="+idpas+"&nom="+nom+"&apep="+apep+"&idcor="+idCor+"&hsal="+hsal+"&asi="+asi,
+                            success: mostrarRP
+                        });
+                        
+                        function mostrarRP(datos) {
+                            var resp=$("#respuesta");
+                            resp.html(datos);
+                        }
+                    });
+                    var ConT=$("#ConT");
+                    ConT.click(function consultarT(){
+                       
+                         $.ajax({
+                            type:"POST",
+                            url:"consultaT.php",
+                            data:"",
+                            success: cargarDatos
+                            });
+                        function cargarDatos(datos) {
+                             
+                            var respCarga=$.parseJSON(datos);
+                            var respConsAct=$("#respC");
+                            dibujarTabla(respConsAct, respCarga); 
+                        }
+                    });
+                    
+                    var ConI=$("#ConI");
+                    ConI.click(function consultarI(){
+                        
+                        var idPas=parseInt($("#idPas").val());
+                        
+                        $.ajax({
+                            type:"POST",
+                            url:"consultaI.php",
+                            data:"idpas="+idPas,
+                            success: cargarDatosI
+                            });
+                        function cargarDatosI(datos) {
+                            //alert("Listo"+datos);
+                            var respCarga=$.parseJSON(datos);
+                            var respConsAct=$("#respC2");
+                            dibujarTabla(respConsAct, respCarga); 
+                        }       
+                    });
+                    
+                    var btnConsAct = $("#btnConsAct");
+                    btnConsAct.click(function cargarDat(){
+                        //alert("si funciona");
+                        $.ajax({
+                            type:"POST",
+                            url:"consultaT.php",
+                            data:"",
+                            success: cargarDatos
+                            });
+                        function cargarDatos(datos) {
+                            
+                            var respCarga=$.parseJSON(datos);
+                          
+                            var respConsAct=$("#respConsAct");
+                              
+                            dibujarTabla(respConsAct, respCarga);
+                           
+                        }
+                    });
+                    var btnCarDatos=$("#btnCarDatos");
+                    btnCarDatos.click(function cargarInf(){
+                        var idPas=parseInt($("#nomActualizar").val());
+                            $.ajax({
+                               type:"POST",
+                               url:"consultaI.php",
+                               data:"idpas="+idPas,
+                               success: cargarDatosAct
+                            });
+                    
+                            
+                            function cargarDatosAct(datos) {
+                                
+                                var consDatAct=$.parseJSON(datos);
+                                
+                                var respCargDatos=$("#respCargDatos");
+                                respCargDatos.html("<label>Id del Pasajero:</label><input type='text' id='idPase'>");
+                                respCargDatos.append("<label>Nombre:</label><input type='text' id='nom'>");
+                                respCargDatos.append("<label>Apellido Paterno:</label><input type='text' id='appat'>");
+                                respCargDatos.append("<label>Id de la corrida:</label><input type='text' id='idcor'>");
+                                respCargDatos.append("<label>Hora de Salida:</label><input type='text' id='sal'>");
+                                respCargDatos.append("<label>Asiento:</label><input type='text' id='asi'>");
+                                var Id=$("#idPase");
+                                var nom=$("#nom");
+                                var appat=$("#appat");
+                                var idcor=$("#idcor");
+                                var hsal=$("#sal");
+                                var asi=$("#asi");
+                    
+                                for(var i in consDatAct){
+                                    Id.val(consDatAct[i].Id_Pasajero);
+                                    nom.val(consDatAct[i].Nombre);
+                                    appat.val(consDatAct[i].ApellidoP);
+                                    idcor.val(consDatAct[i].Id_Corrida);
+                                    hsal.val(consDatAct[i].Hora_Salida);
+                                    asi.val(consDatAct[i].Asiento);
+                                }
+                            }
+                    });
+                    
+                    var btnGuarDatos=$("#btnGuarDatos");
+                    btnGuarDatos.click(function actual(){
+                        var idpas=parseInt($("#idPase").val());
+                        var nom= $("#nom").val();
+                        var apep= $("#appat").val();
+                        var idCor= parseInt($("#idcor").val());
+                        var hsal= $("#sal").val();
+                        var asi= parseInt($("#asi").val());
+                        
+                        $.ajax({
+                            type: "POST",
+                            url: "actualizar.php",
+                            data: "idpas="+idpas+"&nom="+nom+"&apep="+apep+"&idcor="+idCor+"&hsal="+hsal+"&asi="+asi,
+                            success: actualizacion
+                        });
+                        function actualizacion(datos) {
+                            alert("datos: "+datos);
+                        }
+                    });
+                    
+                    var elim=$("#elim");
+                    elim.click(function eliminar1(){
+                        var idPasE=parseInt($("#idPasE").val());
+                        $.ajax({
+                            type:"POST",
+                            url: "eliminar.php",
+                            data: "idpasE="+idPasE,
+                            success: eliminacion
+                        });
+                        
+                        function eliminacion(datos) {
+                            alert("datos eliminados "+datos)
+                        }
+                    });
+                    
+                    
+                    function dibujarTabla(resp, respDatos ) {
+                        resp.html("");
+                        resp.append('<table id="tab" border="1">');
+                        var tabla=$("#tab");
+                        tabla.html("<tr><th>ID</th><th>Nombre</th><th>ApellidoPaterno</th><th>Corrida</th><th>Hora de Salida</th><th>Asiento</th>");
+                        for(var i in respDatos){
+                            tabla.append("<tr><td>"+respDatos[i].Id_Pasajero+"</td>"
+                                         +"<td>"+respDatos[i].Nombre+"</td>"
+                                         +"<td>"+respDatos[i].ApellidoP+"</td>"
+                                         +"<td>"+respDatos[i].Id_Corrida+"</td>"
+                                         +"<td>"+respDatos[i].Hora_Salida+"</td>"
+                                         +"<td>"+respDatos[i].Asiento+"</td>");
+                        }
+                        tabla.append("</table>");
+                    }
+                    
+                    var regCor=$("#regCor");
+                    regCor.click(function registrarC(){
+                        var idcor=parseInt($("#idcor").val());
+                        var hsal= $("#hsal").val();
+                        var des= $("#des").val();
+                        var lin= $("#lin").val();
+                        
+                        $.ajax({
+                            type: "POST",
+                            url: "regcor.php",
+                            data: "idcor="+idcor+"&hsal="+hsal+"&des="+des+"&lin="+lin,
+                            success: mostrarRC
+                        });
+                        
+                        function mostrarRC(datos) {
+                            var resp=$("#respuestaC");
+                            resp.html(datos);
+                        }   
+                    });
+                    
+                    var ConTC=$("#ConTC");
+                    ConTC.click(function consultarC(){
+                         $.ajax({
+                            type:"POST",
+                            url:"consultaTcor.php",
+                            data:"",
+                            success: cargarDatos
+                            });
+                        function cargarDatos(datos) {
+                             
+                            var respCarga=$.parseJSON(datos);
+                            var respConsAct=$("#respCC");
+                            dibujarTabla1(respConsAct, respCarga); 
+                        }    
+                    });
+                    
+                    var ConIC=$("#ConIC");
+                    ConIC.click(function consulIC(){
+                        var idcorC=parseInt($("#idcorC").val());
+                        //alert(idcorC);
+                         $.ajax({
+                            type:"POST",
+                            url:"consultaIcor.php",
+                            data:"idcor="+idcorC,
+                            success: cargarDatosIcor
+                            });
+                        function cargarDatosIcor(datos) {
+                            //alert("Listo"+datos);
+                            var respCarga=$.parseJSON(datos);
+                            var respConsAct=$("#respCC2");
+                            dibujarTabla1(respConsAct, respCarga); 
+                        }       
+                    });
+                    
+                    var btnConsActC = $("#btnConsActC");
+                    btnConsActC.click(function cargarDatC(){
+                        //alert("si funciona");
+                        $.ajax({
+                            type:"POST",
+                            url:"consultaTcor.php",
+                            data:"",
+                            success: cargarDatosC
+                            });
+                        function cargarDatosC(datos) {
+                            
+                            var respCarga=$.parseJSON(datos);
+                          
+                            var respConsAct=$("#respConsActC");
+                              
+                            dibujarTabla1(respConsAct, respCarga);
+                           
+                        }
+                    });
+                    
+                    var btnCarDatosC=$("#btnCarDatosC");
+                    btnCarDatosC.click(function cargarInfC(){
+                        var idaC=parseInt($("#idaC").val());
+                            $.ajax({
+                               type:"POST",
+                               url:"consultaIcor.php",
+                               data:"idcor="+idaC,
+                               success: cargarDatosAct
+                            });
+                    
+                            
+                            function cargarDatosAct(datos) {
+                                
+                                var consDatAct=$.parseJSON(datos);
+                                
+                                var respCargDatos=$("#respCargDatosC");
+                                respCargDatos.html("<label>Id de la Corrida:</label><input type='text' id='idcorr'>");
+                                respCargDatos.append("<label>Hora de Salida:</label><input type='text' id='hsali'>");
+                                respCargDatos.append("<label>Destino:</label><input type='text' id='dest'>");
+                                respCargDatos.append("<label>Linea:</label><input type='text' id='linea'>");
+                                var Id=$("#idcorr");
+                                var hsali=$("#hsali");
+                                var des=$("#dest");
+                                var lin=$("#linea");
+                    
+                                for(var i in consDatAct){
+                                    Id.val(consDatAct[i].Id_Corrida);
+                                    hsali.val(consDatAct[i].Hora_Salida);
+                                    des.val(consDatAct[i].Destino);
+                                    lin.val(consDatAct[i].Linea);
+                                }
+                            }
+                    });
+                    
+                     var btnGuarDatosC=$("#btnGuarDatosC");
+                    btnGuarDatosC.click(function actualC(){
+                        var idcor=parseInt($("#idcorr").val());
+                        var hsali= $("#hsali").val();
+                        var des= $("#dest").val();
+                        var lin= $("#linea").val();
+                        
+                        $.ajax({
+                            type: "POST",
+                            url: "actualizarcor.php",
+                            data: "idcor="+idcor+"&hsal="+hsali+"&des="+des+"&lin="+lin,
+                            success: actualizacion3
+                        });
+                        function actualizacion3(datos) {
+                            alert("datos: "+datos);
+                        }
+                    });
+                    
+                    var elimC=$("#elimC");
+                    elimC.click(function eliminar2(){
+                        var idCorE=parseInt($("#idCorE").val());
+                        $.ajax({
+                            type:"POST",
+                            url: "eliminarcor.php",
+                            data: "idCorE="+idCorE,
+                            success: eliminacion2
+                        });
+                        
+                        function eliminacion2(datos) {
+                            alert("datos eliminados "+datos)
+                        }
+                    });
+                    
+                    function dibujarTabla1(resp, respDatos ) {
+                        resp.html("");
+                        resp.append('<table id="tab" border="1">');
+                        var tabla=$("#tab");
+                        tabla.html("<tr><th>ID</th><th>Hora de Salida</th><th>Destino</th><th>Linea</th>");
+                        for(var i in respDatos){
+                            tabla.append("<tr><td>"+respDatos[i].Id_Corrida+"</td>"
+                                         +"<td>"+respDatos[i].Hora_Salida+"</td>"
+                                         +"<td>"+respDatos[i].Destino+"</td>"
+                                         +"<td>"+respDatos[i].Linea+"</td>");
+                        }
+                        tabla.append("</table>");
+                    }
+                });
+            </script>
+        </head>
+        <body onload="inicio()">
+            <div data-role="page" id="principal" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">Control Movil de Registro de Pasajeros y Corridas</p>
+                </div>
+                <div data-role="content">
+                    <a href="#pag1" data-role="button" data-transition="pop">Pasajeros</a>
+                    <a href="#pag2" data-role="button" data-transition="pop">Corridas de Autobuses</a>
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+            
+           <div data-role="page" id="pag1" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Pasajeros---</p>
+                </div>
+                <div data-role="content">
+                    <a href="#pagRP" data-role="button" data-transition="pop">Registrar</a>
+                    <a href="#pagCP" data-role="button" data-transition="pop">Consultar</a>
+                    <a href="#pagAc" data-role="button" data-transition="pop">Modificar</a>
+                    <a href="#pagEl" data-role="button" data-transition="pop">Eliminar</a>
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+            <div data-role="page" id="pag2" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Corridas de Autobuses---</p>
+                </div>
+                <div data-role="content">
+                    <a href="#pagRC" data-role="button" data-transition="pop">Registrar</a>
+                    <a href="#pagCC" data-role="button" data-transition="pop">Consultar</a>
+                    <a href="#pagAC" data-role="button" data-transition="pop">Modificar</a>
+                    <a href="#pagEC" data-role="button" data-transition="pop">Eliminar</a>
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+            
+             <div data-role="page" id="pagRP" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Registro de Pasajero---</p>
+                </div>
+                <div data-role="content">
+                    <form method="post" action="envio.php">
+                        <div class="ui-field-contain">
+                            <label>Id del Pasajero:</label>
+                            <input type="text" id="idpasajero" name="idpasajero"><br/>
+                            <label>Nombre:</label>
+                            <input type="text" id="nombre" name="nombre"><br/>
+                            <label>Apellido Paterno:</label>
+                            <input type="text" id="apep" name="apep"><br/>
+                            <label>Id de la Corrida:</label>
+                            <input type="text" id="idcorrida" name="idcorrida"><br/>
+                            <label>Hora de Salida:</label>
+                            <input type="text" id="hsalida" name="hsalida"><br/>
+                            <label>Asiento:</label>
+                            <input type="text" id="asiento" name="asiento"><br/>
+                           
+                        </div>
+                        <input type="button" name="regPas" id="regPas" value="Registrar">
+                    </form>
+                    <div id="respuesta">
+                        
+                    </div>
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+             <div data-role="page" id="pagCP" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Pasajeros---</p>
+                </div>
+                <div data-role="content">
+                    <a href="#pagCP1" data-role="button" data-transition="pop">Consultar Todos los Registros</a>
+                    <a href="#pagCP2" data-role="button" data-transition="pop">Consultar Por Id</a>
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             <div data-role="page" id="pagCP1" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Pasajeros---</p>
+                </div>
+                <div data-role="content">
+                    <input type="button" name="ConT" id="ConT" value="Consultar Todos">
+                    <div id="respC"></div>
+                    
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             <div data-role="page" id="pagCP2" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Pasajeros---</p>
+                </div>
+                <div data-role="content">
+                    <label for="idPas">Ingresa el Id del Pasajero</label>
+                    <input type="text" id="idPas" name="idPas">
+                    <input type="button" name="ConI" id="ConI" value="Consultar">
+                    <div id="respC2">
+                        
+                    </div>
+                    
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+             <div data-role="page" id="pagAc" name="consul2">
+                <div data-role="header">
+                    <p>---Actualizar Datos del Pasajero---</p>
+                </div>
+                <div data-role="content">
+                    <input type="button" id="btnConsAct" value="Mostrar Todos los registros">
+                    <div id="respConsAct">
+                        
+                    </div>
+                    <label for="nomActualizar">Id del Pasajero a Actualizar</label>
+                    <input type="text" id="nomActualizar">
+                    <input type="button" id="btnCarDatos" value="Cargar Datos">
+                    <div id="respCargDatos"></div>
+                    <input type="button" id="btnGuarDatos" value="Guardar Datos">
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             <div data-role="page" id="pagEl" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Pasajeros---</p>
+                </div>
+                <div data-role="content">
+                    <label for="idPas">Ingresa el Id del Pasajero a Eliminar</label>
+                    <input type="text" id="idPasE" name="idPasE">
+                    <input type="button" name="elim" id="elim" value="Eliminar">
+                    <div id="respC2">
+                        
+                    </div>
+                    
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+             
+             <div data-role="page" id="pagRC" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Registro de Corrida---</p>
+                </div>
+                <div data-role="content">
+                    <form method="post" action="envio.php">
+                        <div class="ui-field-contain">
+                            <label>Id de la Corrida:</label>
+                            <input type="text" id="idcor" name="idcor"><br/>
+                            <label>Hora de salida:</label>
+                            <input type="text" id="hsal" name="hsal"><br/>
+                            <label>Destino:</label>
+                            <input type="text" id="des" name="des"><br/>
+                            <label>Linea:</label>
+                            <input type="text" id="lin" name="lin"><br/>
+                        </div>
+                        <input type="button" name="regCor" id="regCor" value="Registrar">
+                    </form>
+                    <div id="respuestaC">
+                        
+                    </div>
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+             <div data-role="page" id="pagCC" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Corridas---</p>
+                </div>
+                <div data-role="content">
+                    <a href="#pagCC1" data-role="button" data-transition="pop">Consultar Todos los Registros</a>
+                    <a href="#pagCC2" data-role="button" data-transition="pop">Consultar Por Id</a>
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+             <div data-role="page" id="pagCC1" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Corridas---</p>
+                </div>
+                <div data-role="content">
+                    <input type="button" name="ConTC" id="ConTC" value="Consultar Todos">
+                    <div id="respCC"></div>
+                    
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+             <div data-role="page" id="pagCC2" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Corridas---</p>
+                </div>
+                <div data-role="content">
+                    <label for="idPas">Ingresa el Id de la Corrida</label>
+                    <input type="text" id="idcorC" name="idcorC">
+                    <input type="button" name="ConIC" id="ConIC" value="Consultar">
+                    <div id="respCC2">
+                        
+                    </div>
+                    
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+             <div data-role="page" id="pagAC" name="consul2">
+                <div data-role="header">
+                    <p>---Actualizar Datos de la Corrida---</p>
+                </div>
+                <div data-role="content">
+                    <input type="button" id="btnConsActC" value="Mostrar Todos los registros">
+                    <div id="respConsActC">
+                        
+                    </div>
+                    <label for="nomActualizar">Id de la Corrida a Actualizar</label>
+                    <input type="text" id="idaC">
+                    <input type="button" id="btnCarDatosC" value="Cargar Datos">
+                    <div id="respCargDatosC"></div>
+                    <input type="button" id="btnGuarDatosC" value="Guardar Datos">
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+             <div data-role="page" id="pagEC" name="principal">
+                <div data-role="header">
+                    <p style="text-align: center">---Corridas---</p>
+                </div>
+                <div data-role="content">
+                    <label for="idPas">Ingresa el Id de la Corrida a Eliminar</label>
+                    <input type="text" id="idCorE" name="idCorE">
+                    <input type="button" name="elimC" id="elimC" value="Eliminar">
+                    <div id="respC2">
+                        
+                    </div>
+                    
+                </div>
+                <div data-role="footer">
+                    <p style="text-align: center">Derechos Reservados de CAO</p>
+                </div>
+                
+            </div>
+             
+        </body>
+    </html>
