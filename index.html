@@ -19,7 +19,7 @@
                         
                         $.ajax({
                             type: "POST",
-                            url: "regpas.php",
+                            url: "http://silvaleo.260mb.net/regpas.php",
                             data: "idpas="+idpas+"&nom="+nom+"&apep="+apep+"&idcor="+idCor+"&hsal="+hsal+"&asi="+asi,
                             success: mostrarRP
                         });
@@ -34,7 +34,7 @@
                        
                          $.ajax({
                             type:"POST",
-                            url:"consultaT.php",
+                            url:"http://silvaleo.260mb.net/consultaT.php",
                             data:"",
                             success: cargarDatos
                             });
@@ -53,7 +53,7 @@
                         
                         $.ajax({
                             type:"POST",
-                            url:"consultaI.php",
+                            url:"http://silvaleo.260mb.net/consultaI.php",
                             data:"idpas="+idPas,
                             success: cargarDatosI
                             });
@@ -70,7 +70,7 @@
                         //alert("si funciona");
                         $.ajax({
                             type:"POST",
-                            url:"consultaT.php",
+                            url:"http://silvaleo.260mb.net/consultaT.php",
                             data:"",
                             success: cargarDatos
                             });
@@ -89,7 +89,7 @@
                         var idPas=parseInt($("#nomActualizar").val());
                             $.ajax({
                                type:"POST",
-                               url:"consultaI.php",
+                               url:"http://silvaleo.260mb.net/consultaI.php",
                                data:"idpas="+idPas,
                                success: cargarDatosAct
                             });
@@ -135,7 +135,7 @@
                         
                         $.ajax({
                             type: "POST",
-                            url: "actualizar.php",
+                            url: "http://silvaleo.260mb.net/actualizar.php",
                             data: "idpas="+idpas+"&nom="+nom+"&apep="+apep+"&idcor="+idCor+"&hsal="+hsal+"&asi="+asi,
                             success: actualizacion
                         });
@@ -149,7 +149,7 @@
                         var idPasE=parseInt($("#idPasE").val());
                         $.ajax({
                             type:"POST",
-                            url: "eliminar.php",
+                            url: "http://silvaleo.260mb.net/eliminar.php",
                             data: "idpasE="+idPasE,
                             success: eliminacion
                         });
@@ -185,7 +185,7 @@
                         
                         $.ajax({
                             type: "POST",
-                            url: "regcor.php",
+                            url: "http://silvaleo.260mb.net/regcor.php",
                             data: "idcor="+idcor+"&hsal="+hsal+"&des="+des+"&lin="+lin,
                             success: mostrarRC
                         });
@@ -200,7 +200,7 @@
                     ConTC.click(function consultarC(){
                          $.ajax({
                             type:"POST",
-                            url:"consultaTcor.php",
+                            url:"http://silvaleo.260mb.net/consultaTcor.php",
                             data:"",
                             success: cargarDatos
                             });
@@ -218,7 +218,7 @@
                         //alert(idcorC);
                          $.ajax({
                             type:"POST",
-                            url:"consultaIcor.php",
+                            url:"http://silvaleo.260mb.net/consultaIcor.php",
                             data:"idcor="+idcorC,
                             success: cargarDatosIcor
                             });
@@ -235,7 +235,7 @@
                         //alert("si funciona");
                         $.ajax({
                             type:"POST",
-                            url:"consultaTcor.php",
+                            url:"http://silvaleo.260mb.net/consultaTcor.php",
                             data:"",
                             success: cargarDatosC
                             });
@@ -255,7 +255,7 @@
                         var idaC=parseInt($("#idaC").val());
                             $.ajax({
                                type:"POST",
-                               url:"consultaIcor.php",
+                               url:"http://silvaleo.260mb.net/consultaIcor.php",
                                data:"idcor="+idaC,
                                success: cargarDatosAct
                             });
@@ -293,7 +293,7 @@
                         
                         $.ajax({
                             type: "POST",
-                            url: "actualizarcor.php",
+                            url: "http://silvaleo.260mb.net/actualizarcor.php",
                             data: "idcor="+idcor+"&hsal="+hsali+"&des="+des+"&lin="+lin,
                             success: actualizacion3
                         });
@@ -307,7 +307,7 @@
                         var idCorE=parseInt($("#idCorE").val());
                         $.ajax({
                             type:"POST",
-                            url: "eliminarcor.php",
+                            url: "http://silvaleo.260mb.net/eliminarcor.php",
                             data: "idCorE="+idCorE,
                             success: eliminacion2
                         });
